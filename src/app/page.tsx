@@ -169,7 +169,12 @@ export default function Home() {
               value={vehicle || ''}
               onChange={setVehicle}
               options={
-                data.vehicles ? data.vehicles?.map((v) => ({ label: v.model + " (" + v.minWeight + " - " + v.maxWeight + "kg)", value: v.model })) : []
+                data.vehicles
+                  ? data.vehicles?.map((v) => ({
+                      label: v.model + ' (' + v.minWeight + ' - ' + v.maxWeight + 'kg)',
+                      value: v.model,
+                    }))
+                  : []
               }
             />
           </Fade>
