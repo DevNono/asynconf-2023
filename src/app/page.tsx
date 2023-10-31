@@ -18,6 +18,7 @@ export default function Home() {
   const [submitting, setSubmitting] = React.useState(false);
   const [data, setData] = React.useState<Data>({} as Data);
   const [error, setError] = React.useState<Error | null>(null);
+  const [fatalError, setFatalError] = React.useState(false);
 
   // Form input variables
   const [vehicle, setVehicle] = React.useState<string | null>(null);
@@ -129,12 +130,23 @@ export default function Home() {
       .catch((err) => {
         // Log the error in the console
         console.log(err);
+
+        // Set the fatal error
+        setFatalError(true);
+
+        // Set the loading to false
+        setLoading(false);
       });
   }, []);
 
   // If the data is not loaded yet, we show a loader
   if (loading) {
     return <Loader />;
+  }
+
+  // If fatal error, we show a message
+  if (fatalError) {
+    return <p className='text-2xl text-center text-white'>Une erreur est survenue, merci de réessayer plus tard</p>;
   }
 
   return (
