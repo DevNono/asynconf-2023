@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -15,12 +15,11 @@ const config: Config = {
         main: '#222528',
       },
       fontFamily: {
-        sans: ['var(--font-lexend)'],
+        sans: ['var(--font-lexend)', 'sans-serif'],
       },
 
-      // define gradient
-
-      backgroundImage: theme => ({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      backgroundImage: (theme) => ({
         'main-gradient': 'linear-gradient(180deg, #8AF657 0%, #47D981 100%)',
         'background-gradient': 'linear-gradient(315deg, #000000 0%, #154B2C 100%)',
       }),
