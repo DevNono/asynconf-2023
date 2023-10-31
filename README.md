@@ -31,6 +31,8 @@ Ensuite, il faut lancer le serveur de développement :
 npm run dev
 ```
 
+Note : Merci de ne pas utiliser `npm run build && npm run start` pour lancer le projet, car cela ne fonctionnera pas.
+
 Vous pouvez ensuite ouvrir [http://localhost:3000](http://localhost:3000) avec votre navigateur pour voir le résultat.
 
 ## Infos complémentaires
