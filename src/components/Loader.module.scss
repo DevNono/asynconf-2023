@@ -1,7 +1,5 @@
 .loader {
   transform-origin: 50% 65%;
-  // stroke-width: 2px;
-  // fill: #083240;
   width: 100px;
   height: 100px;
 
@@ -9,7 +7,6 @@
     stroke: white;
     stroke-dasharray: 400;
     animation: dash 2s forwards cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
-    animation-delay: 1.25s;
   }
 }
 

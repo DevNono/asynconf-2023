@@ -7,7 +7,23 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    extend: {
+      colors: {
+        primary: '#47D981',
+        'primary-dark': '#30AA61',
+        secondary: '#0085FF',
+        main: '#222528',
+      },
+      fontFamily: {
+        sans: ['var(--font-lexend)'],
+      },
 
+      // define gradient
+
+      backgroundImage: theme => ({
+        'main-gradient': 'linear-gradient(180deg, #8AF657 0%, #47D981 100%)',
+      }),
+    },
   },
   plugins: [],
 }
