@@ -1,51 +1,50 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { BankInformation, ConstructionYear, Energy, MileagePerYear, Passenger, Vehicle } from '@/types';
 import fs from 'fs';
 
-// Get json file and parse it
+// Get json file and parse it (as it's in the beginning of the fil, it's state will be preserved on each call)
 const json = JSON.parse(fs.readFileSync('@/../public/data.json', 'utf8'));
 
 // Get parameters from json file
-const vehiules = json.vehicules as Array<{ model: string; minWeight: number; maxWeight: number; score?: number }>;
-const energies = json.energies as Array<{ name: string; score?: number }>;
-const mileagesPerYear = json.mileagesPerYear as Array<{ minKilo: number; maxKilo: number; score?: number }>;
-const constructionYears = json.constructionYears as Array<{ minYear: number; maxYear: number; score?: number }>;
+const vehiules = json.vehicles as Vehicle[];
+const energies = json.energies as Energy[];
+const mileagesPerYear = json.mileagesPerYear as MileagePerYear[];
+const constructionYears = json.constructionYears as ConstructionYear[];
 
 // Get bonuses and maluses from json file (as passengers)
-const passengers = json.passengers as Array<{ passengersNumber: number; percentage: number }>;
+const passengers = json.passengers as Passenger[];
 
 // Get bank informations from json file in order to calculate the borrowing rate
-const bankInformations = json.bankInformations as Array<{
-  minScore: number;
-  maxScore: number;
-  borrowingPercentage: number;
-}>;
+const bankInformations = json.bankInformations as BankInformation[];
 
 // We use the same file for the GET call as it's a small project
 export async function GET() {
-  // Prepare data to send back by removing score from vehiules, energies, mileagesPerYear and constructionYears
+  // Prepare data to send back by removing score from vehiules, energies, mileagesPerYear, constructionYears and passengers
   // Indeed score is a sensitive data and we don't need it
   const safeVehiules = vehiules.map(({ score, ...rest }) => rest);
   const safeEnergies = energies.map(({ score, ...rest }) => rest);
   const safeMileagesPerYear = mileagesPerYear.map(({ score, ...rest }) => rest);
   const safeConstructionYears = constructionYears.map(({ score, ...rest }) => rest);
+  const safePassengers = passengers.map(({ percentage, ...rest }) => rest);
 
-  // Send back the result without bankInformations and passengers as there are sensitive data and we don't need them
+  // Send back the result without bankInformations as it contains sensitive data and we don't need them
   return Response.json({
-    vehicules: safeVehiules,
+    vehicles: safeVehiules,
     energies: safeEnergies,
     mileagesPerYear: safeMileagesPerYear,
     constructionYears: safeConstructionYears,
+    passengers: safePassengers,
   });
 }
 
 // Use the api route as a POST request
 export async function POST(request: Request) {
-  const { vehicule, energy, mileagePerYear, constructionYear, passenger } = await request.json();
+  const { vehicle, energy, mileagePerYear, constructionYear, passenger } = await request.json();
 
-  // Get the vehicule score, if the vehicule is not found, then return an error
-  const vehiculeScore = vehiules.find((v) => v.model === vehicule)?.score;
+  // Get the vehicle score, if the vehicle is not found, then return an error
+  const vehicleScore = vehiules.find((v) => v.model === vehicle)?.score;
 
-  if (!vehiculeScore) return Response.json({ error: "Le type de véhicule n'a pas été trouvé", formerror: 'vehicule' });
+  if (!vehicleScore) return Response.json({ error: "Le type de véhicule n'a pas été trouvé", formerror: 'vehicle' });
 
   // Get the energy score, if the energy is not found, then return an error
   const energyScore = energies.find((e) => e.name === energy)?.score;
@@ -68,7 +67,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // else return a generic error
+    // Else return a generic error
     return Response.json({ error: "Le kilométrage annuel n'a pas été trouvé", formerror: 'mileagePerYear' });
   }
 
@@ -93,8 +92,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "L'année de construction n'a pas été trouvé", formerror: 'constructionYear' });
   }
 
-  // Calculate the score with the vehicule, energy, mileagePerYear and constructionYear scores
-  const score = vehiculeScore + energyScore + mileagePerYearScore + constructionYearScore;
+  // Calculate the score with the vehicle, energy, mileagePerYear and constructionYear scores
+  const score = vehicleScore + energyScore + mileagePerYearScore + constructionYearScore;
 
   // Get the bankInformations borrowing rate, if the bankInformations is not found, then return an error
   const borrowingPercentage = bankInformations.find((b) => score >= b.minScore && score <= b.maxScore)
@@ -121,7 +120,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // else return a generic error
+    // Else return a generic error
     return Response.json({ error: "Le nombre de passagers n'a pas été trouvé", formerror: 'passenger' });
   }
 

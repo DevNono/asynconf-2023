@@ -1,5 +1,5 @@
 {
-    "vehicules": [
+    "vehicles": [
         {
             "model": "Citadine",
             "minWeight": 800,
@@ -133,7 +133,7 @@
             "borrowingPercentage": 1.85
         }
     ],
-    "bonusMalus": [
+    "passengers": [
         {
             "passengersNumber": 1,
             "percentage": 0.11

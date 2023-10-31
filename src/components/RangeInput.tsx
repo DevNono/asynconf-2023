@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 /**
  * Displays a select field.
  */
-const Range = ({
+const RangeInput = ({
   label = '',
   min,
   max,
+  unit = '',
   step = 1,
   value,
   onChange,
@@ -19,6 +20,8 @@ const Range = ({
   min: number;
   /** Maximal value */
   max: number;
+  /** Unit to display */
+  unit?: string;
   /** Step value */
   step?: number;
   /** Value of the select */
@@ -30,34 +33,35 @@ const Range = ({
   /** An optional class name to add to the container */
   className?: string;
 }) => {
-  const [currentValue, setCurrentValue] = useState(value);
+  const [currentValue, setCurrentValue] = useState(value || min || 0);
 
   return (
     <div className={`block relative w-full ${className}`}>
       <label>
         <div className={'block pb-1 text-main font-bold select-none'}>{label}</div>
-        <div className="p-4 price-range">
-          <span className="text-sm">{currentValue}</span>
+        <div className="p-1 price-range">
+          <span className={`text-sm transition-all duration-200 ease-in-out ${!value ? "opacity-0" : ''}`}>{currentValue} {unit}</span>
           <input
             className="w-full h-3 transition-colors duration-300 ease-in-out bg-gray-200 rounded-lg cursor-pointer accent-primary"
             type="range"
             min={min}
             max={max}
+            step={step}
             value={value}
             onChange={(e) => {
-              setCurrentValue(e.target.value)
-              onChange(e.target.value)
+              setCurrentValue(e.target.value);
+              onChange(e.target.value);
             }}
-            disabled={disabled} />
+            disabled={disabled}
+          />
           <div className="flex justify-between w-full -mt-1">
             <span className="text-sm text-gray-600">{min}</span>
             <span className="text-sm text-gray-600">{max}</span>
           </div>
         </div>
-
       </label>
     </div>
   );
-}
+};
 
-export default Range;
+export default RangeInput;
