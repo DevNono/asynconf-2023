@@ -3,7 +3,7 @@ import { BankInformation, ConstructionYear, Energy, MileagePerYear, Passenger, V
 import fs from 'fs';
 
 // Get json file and parse it (as it's in the beginning of the fil, it's state will be preserved on each call)
-const json = JSON.parse(fs.readFileSync('@/../public/data.json', 'utf8'));
+const json = JSON.parse(fs.readFileSync(process.cwd() + '/public/data.json', 'utf8'));
 
 // Get parameters from json file
 const vehiules = json.vehicles as Vehicle[];
