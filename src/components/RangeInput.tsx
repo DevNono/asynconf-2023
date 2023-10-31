@@ -50,7 +50,7 @@ const RangeInput = ({
           <input
             className={`${
               error ? '!accent-red-600' : ''
-            }  w-full h-3 transition-colors duration-300 ease-in-out bg-gray-200 rounded-lg cursor-pointer accent-primary ${
+            }  w-full h-3 transition-all duration-300 ease-in-out bg-gray-200 rounded-lg cursor-pointer accent-primary ${
               error ? styles.shake : ''
             }`}
             type="range"

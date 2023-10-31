@@ -43,7 +43,7 @@ const Select = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}>
         {options.map((option) => (
-          <option value={option.value} key={option.value}>
+          <option value={option.value} key={option.value} className="font-sans">
             {option.label}
           </option>
         ))}
