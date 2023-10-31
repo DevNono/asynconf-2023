@@ -8,6 +8,7 @@ import Select from '@/components/Select';
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { Data, Error } from '@/types';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const progressBar = React.useRef<HTMLDivElement>(null);
@@ -19,9 +20,11 @@ export default function Home() {
   // Form input variables
   const [vehicle, setVehicle] = React.useState<string | null>(null);
   const [energy, setEnergy] = React.useState<string | null>(null);
-  const [mileagesPerYear, setMileagesPerYear] = React.useState<number | null>(null);
+  const [mileagePerYear, setMileagePerYear] = React.useState<number | null>(null);
   const [constructionYear, setConstructionYear] = React.useState<number | null>(null);
   const [passenger, setPassenger] = React.useState<number | null>(null);
+
+  const router = useRouter();
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     // Avoid page reload
@@ -43,7 +46,7 @@ export default function Home() {
         {
           vehicle,
           energy,
-          mileagesPerYear,
+          mileagePerYear,
           constructionYear,
           passenger,
         },
@@ -68,8 +71,21 @@ export default function Home() {
             return;
           }
 
-          // Save data to localstorage
-          localStorage.setItem('data', JSON.stringify(res.data));
+          if (res.data.value) {
+            // Save data to localstorage in order to display it in the result page
+            localStorage.setItem('percentage', res.data.value);
+
+            // Redirect to the result page
+            router.push('/result');
+
+            return;
+          }
+
+          // No error, we redirect to the result page
+          setError({
+            message: "Une erreur inconnue s'est produite",
+            field: null,
+          });
         }, 1000);
       })
       .catch((err) => {
@@ -86,10 +102,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setError({
-      message: "Une erreur s'est produite lors de l'envoi du formulaire",
-      field: null,
-    });
     // Before showing the content, we make sure that we get the data from the api
     axios
       .get('api/rate')
@@ -100,7 +112,7 @@ export default function Home() {
         // Set all the values to the first value of the data
         setVehicle(res.data.vehicles[0].model);
         setEnergy(res.data.energies[0].name);
-        setMileagesPerYear(res.data.mileagesPerYear[0].minKilo);
+        setMileagePerYear(res.data.mileagesPerYear[0].minKilo);
         setPassenger(res.data.passengers[0].passengersNumber);
 
         // Stop the loader after a delay of 500ms to make sure that the loader is shown as we are in local environment
@@ -157,15 +169,15 @@ export default function Home() {
             min={data.mileagesPerYear && Math.min(...data.mileagesPerYear.map((m: { minKilo: number }) => m.minKilo))}
             // We set the max to the max value of the data
             max={data.mileagesPerYear && Math.max(...data.mileagesPerYear.map((m: { maxKilo: number }) => m.maxKilo))}
-            // We calculate the step by dividing the difference between the max and the min by 1000
+            // We calculate the step by dividing the difference between the max and the min by 500
             step={Math.round(
               (Math.max(...data.mileagesPerYear.map((m: { maxKilo: number }) => m.maxKilo)) -
                 Math.min(...data.mileagesPerYear.map((m: { minKilo: number }) => m.minKilo))) /
-                1000,
+                500,
             )}
             unit="km/an"
-            value={mileagesPerYear?.toString() || ''}
-            onChange={(value) => setMileagesPerYear(parseInt(value))}
+            value={mileagePerYear?.toString() || ''}
+            onChange={(value) => setMileagePerYear(parseInt(value))}
           />
 
           <Input

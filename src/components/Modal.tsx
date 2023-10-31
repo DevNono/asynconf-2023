@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import styles from './Modal.module.scss';
 
 /**
  * A component that displays a modal.
@@ -31,7 +32,8 @@ const Modal = ({
   /** An optional class name for the modal. */
   className?: string;
 }) => (
-  <div className={`flex justify-center items-center bg-white rounded-3xl md:w-1/2 lg:w-[800px] relative drop-shadow-md ${className}`}>
+  <div
+    className={`z-10 flex justify-center items-center bg-white rounded-3xl relative drop-shadow-md ${styles.modal} ${className}`}>
     {topHexagon && (
       <div className="absolute flex flex-col items-center justify-center gap-4 rounded-lg -top-40">
         {/* SVG for the heptagon */}

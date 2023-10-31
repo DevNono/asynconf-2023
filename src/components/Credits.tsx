@@ -1,7 +1,7 @@
 const Credits = () => (
-  <div className="absolute w-full bottom-5 text-center">
+  <div className="w-full text-center bottom-5">
     <p>
-      Site réalisé à l&apos;occasion de l&apos;<a href="https://asynconf.fr">Asynconf</a>
+      <a href="https://asynconf.fr">Site réalisé dans le cadre du tournoi de l'Asynconf 2023</a>
     </p>
   </div>
 );

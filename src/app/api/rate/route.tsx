@@ -39,6 +39,7 @@ export async function GET() {
 
 // Use the api route as a POST request
 export async function POST(request: Request) {
+  // Name from the client are in singular
   const { vehicle, energy, mileagePerYear, constructionYear, passenger } = await request.json();
 
   // Get the vehicle score, if the vehicle is not found, then return an error
@@ -56,9 +57,8 @@ export async function POST(request: Request) {
   const maxKilo = Math.max(...mileagesPerYear.map((m) => m.maxKilo));
 
   // Get the mileagePerYear score, if the mileagePerYear is not found, then return an error
-  const mileagePerYearScore = mileagesPerYear.find(
-    (m) => mileagePerYear >= m.minKilo && mileagePerYear <= m.maxKilo,
-  )?.score;
+  const mileagePerYearScore = mileagesPerYear.find((m) => mileagePerYear >= m.minKilo && mileagePerYear <= m.maxKilo)
+    ?.score;
 
   if (!mileagePerYearScore) {
     if (mileagePerYear < minKilo || mileagePerYear > maxKilo) {
@@ -73,12 +73,20 @@ export async function POST(request: Request) {
   }
 
   // Get the constructionYear minimal and maximal score
-  const minYear = Math.min(...constructionYears.map((c) => c.minYear));
-  const maxYear = Math.max(...constructionYears.map((c) => c.maxYear));
+  // We handle the case where the minYear or the maxYear is null meaning that there is no limit
+  const minYears = constructionYears.map((c) => c.minYear);
+  let minYear = Math.min(...minYears);
+  if (minYears.includes(null)) minYear = -Infinity;
+
+  const maxYears = constructionYears.map((c) => c.maxYear);
+  let maxYear = Math.max(...maxYears);
+  if (maxYears.includes(null)) maxYear = new Date().getFullYear();
 
   // Get the constructionYear score, if the constructionYear is not found, then return an error
+  // We consider the null value that means that there is no limit
   const constructionYearScore = constructionYears.find(
-    (c) => constructionYear >= c.minYear && constructionYear <= c.maxYear,
+    (c) =>
+      (constructionYear >= c.minYear || c.minYear === null) && (constructionYear <= c.maxYear || c.maxYear === null),
   )?.score;
 
   if (!constructionYearScore) {
@@ -126,8 +134,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "Le nombre de passagers n'a pas été trouvé", field: 'passenger' });
   }
 
-  // Calculate the score with the passenger bonus/malus score
-  const finalBorrowingPercentage = borrowingPercentage + passengerPercentage;
+  // Calculate the score with the passenger bonus/malus score and limit to 2 decimals
+  const finalBorrowingPercentage = (borrowingPercentage + passengerPercentage).toFixed(2);
 
   // Send back the result as there are no errors
   return Response.json({ value: finalBorrowingPercentage });
