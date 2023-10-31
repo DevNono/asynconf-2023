@@ -2,10 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-$main-background: #1D212D;
-
-html,
-body {
-  background: linear-gradient(180deg, $main-background, 0%, black 100%);
-}
-

@@ -31,7 +31,7 @@ const Modal = ({
   /** An optional class name for the modal. */
   className?: string;
 }) => (
-  <div className={`flex justify-center items-center bg-white rounded-3xl md:w-1/2 lg:w-[800px] relative ${className}`}>
+  <div className={`flex justify-center items-center bg-white rounded-3xl md:w-1/2 lg:w-[800px] relative drop-shadow-md ${className}`}>
     {topHexagon && (
       <div className="absolute flex flex-col items-center justify-center gap-4 rounded-lg -top-40">
         {/* SVG for the heptagon */}

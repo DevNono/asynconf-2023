@@ -7,13 +7,14 @@ import RangeInput from '@/components/RangeInput';
 import Select from '@/components/Select';
 import axios from 'axios';
 import React, { useEffect } from 'react';
-import { Data } from '@/types';
+import { Data, Error } from '@/types';
 
 export default function Home() {
   const progressBar = React.useRef<HTMLDivElement>(null);
   const [loading, setLoading] = React.useState(true);
   const [submitting, setSubmitting] = React.useState(false);
   const [data, setData] = React.useState<Data>({} as Data);
+  const [error, setError] = React.useState<Error | null>(null);
 
   // Form input variables
   const [vehicle, setVehicle] = React.useState<string | null>(null);
@@ -26,11 +27,14 @@ export default function Home() {
     // Avoid page reload
     e.preventDefault();
 
+    // Reset the error
+    setError(null);
+
     // Make the button as "sent"
     setSubmitting(true);
 
     // Reset the progress bar
-    progressBar.current!.style.width = '0';
+    progressBar.current!.style.width = '0%';
 
     // Send request to axios with a progress bar
     axios
@@ -56,17 +60,36 @@ export default function Home() {
         setTimeout(() => {
           setSubmitting(false);
 
+          if (res.data.error) {
+            setError({
+              message: res.data.error,
+              field: res.data.field,
+            });
+            return;
+          }
+
           // Save data to localstorage
           localStorage.setItem('data', JSON.stringify(res.data));
         }, 1000);
       })
       .catch((err) => {
+        // Set the error
+        setError({
+          message: "Une erreur s'est produite lors de l'envoi du formulaire",
+          field: null,
+        });
+        // Log the error in the console
         console.log(err);
+        // Stop the loader in the button
         setSubmitting(false);
       });
   };
 
   useEffect(() => {
+    setError({
+      message: "Une erreur s'est produite lors de l'envoi du formulaire",
+      field: null,
+    });
     // Before showing the content, we make sure that we get the data from the api
     axios
       .get('api/rate')
@@ -80,8 +103,11 @@ export default function Home() {
         setMileagesPerYear(res.data.mileagesPerYear[0].minKilo);
         setPassenger(res.data.passengers[0].passengersNumber);
 
-        // Stop the loader
-        setLoading(false);
+        // Stop the loader after a delay of 500ms to make sure that the loader is shown as we are in local environment
+        // Thus, we want to provide the closest experience to the production environment
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       })
       .catch((err) => {
         console.log(err);
@@ -105,6 +131,7 @@ export default function Home() {
           </div>
 
           <Select
+            error={error?.field === 'vehicle' ? error.message : ''}
             label="Type de véhicule"
             value={vehicle || ''}
             onChange={setVehicle}
@@ -114,6 +141,7 @@ export default function Home() {
           />
 
           <Select
+            error={error?.field === 'energy' ? error.message : ''}
             label="Type d'énergie"
             value={energy || ''}
             onChange={setEnergy}
@@ -123,19 +151,25 @@ export default function Home() {
           />
 
           <RangeInput
+            error={error?.field === 'mileagePerYear' ? error.message : ''}
             label="Kilométrage annuel"
             // We set the min to the min value of the data
             min={data.mileagesPerYear && Math.min(...data.mileagesPerYear.map((m: { minKilo: number }) => m.minKilo))}
             // We set the max to the max value of the data
             max={data.mileagesPerYear && Math.max(...data.mileagesPerYear.map((m: { maxKilo: number }) => m.maxKilo))}
             // We calculate the step by dividing the difference between the max and the min by 1000
-            step={Math.round((Math.max(...data.mileagesPerYear.map((m: { maxKilo: number }) => m.maxKilo)) - Math.min(...data.mileagesPerYear.map((m: { minKilo: number }) => m.minKilo))) / 1000)}
+            step={Math.round(
+              (Math.max(...data.mileagesPerYear.map((m: { maxKilo: number }) => m.maxKilo)) -
+                Math.min(...data.mileagesPerYear.map((m: { minKilo: number }) => m.minKilo))) /
+                1000,
+            )}
             unit="km/an"
             value={mileagesPerYear?.toString() || ''}
             onChange={(value) => setMileagesPerYear(parseInt(value))}
           />
 
           <Input
+            error={error?.field === 'constructionYear' ? error.message : ''}
             label="Année de construction"
             type="number"
             placeholder="2023"
@@ -144,15 +178,23 @@ export default function Home() {
           />
 
           <RangeInput
+            error={error?.field === 'passenger' ? error.message : ''}
             label="Nombre de passagers"
             // We set the min to the min value of the data
-            min={data.passengers && Math.min(...data.passengers.map((p: { passengersNumber: number }) => p.passengersNumber))}
+            min={
+              data.passengers &&
+              Math.min(...data.passengers.map((p: { passengersNumber: number }) => p.passengersNumber))
+            }
             // We set the max to the max value of the data
-            max={data.passengers && Math.max(...data.passengers.map((p: { passengersNumber: number }) => p.passengersNumber))}
-            unit={passenger > 1 ? "passagers" : "passager"}
+            max={
+              data.passengers &&
+              Math.max(...data.passengers.map((p: { passengersNumber: number }) => p.passengersNumber))
+            }
+            unit={passenger > 1 ? 'passagers' : 'passager'}
             value={passenger?.toString() || ''}
-            onChange={(value) => setPassenger(parseInt(value))} />
-
+            onChange={(value) => setPassenger(parseInt(value))}
+          />
+          {error && error.field === null ? <p className="-mb-5 text-center text-red-600">{error.message}</p> : null}
           <Button type="submit" className="flex gap-4" disabled={submitting}>
             Calculer mon taux
             {submitting ? <Loader className="!w-10 !h-auto" /> : null}
@@ -160,7 +202,7 @@ export default function Home() {
         </form>
         <div className="absolute bottom-0 w-full h-1 px-5">
           <div
-            className="h-full transition-all duration-200 rounded-xl bg-main-gradient"
+            className="h-full transition-all duration-400 rounded-xl bg-main-gradient"
             ref={progressBar}
             style={{ width: 0 }}></div>
         </div>

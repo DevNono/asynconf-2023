@@ -22,6 +22,7 @@ const config: Config = {
 
       backgroundImage: theme => ({
         'main-gradient': 'linear-gradient(180deg, #8AF657 0%, #47D981 100%)',
+        'background-gradient': 'linear-gradient(315deg, #000000 0%, #154B2C 100%)',
       }),
     },
   },

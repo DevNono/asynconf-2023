@@ -3,6 +3,7 @@
  */
 const Select = ({
   label = '',
+  error = '',
   options,
   value,
   onChange,
@@ -11,6 +12,8 @@ const Select = ({
 }: {
   /** Label to display */
   label?: string;
+  /** Error to display */
+  error?: string;
   /** List of options */
   options: {
     label: string;
@@ -30,7 +33,9 @@ const Select = ({
       <div className={'block pb-1 text-main font-bold select-none'}>{label}</div>
 
       <select
-        className="w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark"
+        className={`${
+          error ? '!border-red-600' : ''
+        } w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}>
@@ -40,6 +45,9 @@ const Select = ({
           </option>
         ))}
       </select>
+      <div className={`text-red-600 transition-all duration-200 ease-in-out ${!error ? 'opacity-0' : ''}`}>
+        {error ? error : ''}
+      </div>
     </label>
   </div>
 );

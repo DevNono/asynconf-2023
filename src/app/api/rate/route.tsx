@@ -44,31 +44,32 @@ export async function POST(request: Request) {
   // Get the vehicle score, if the vehicle is not found, then return an error
   const vehicleScore = vehiules.find((v) => v.model === vehicle)?.score;
 
-  if (!vehicleScore) return Response.json({ error: "Le type de véhicule n'a pas été trouvé", formerror: 'vehicle' });
+  if (!vehicleScore) return Response.json({ error: "Le type de véhicule n'a pas été trouvé", field: 'vehicle' });
 
   // Get the energy score, if the energy is not found, then return an error
   const energyScore = energies.find((e) => e.name === energy)?.score;
 
-  if (!energyScore) return Response.json({ error: "Le type d'énergie n'a pas été trouvé", formerror: 'energy' });
+  if (!energyScore) return Response.json({ error: "Le type d'énergie n'a pas été trouvé", field: 'energy' });
 
   // Get the mileagePerYear minimal and maximal score
   const minKilo = Math.min(...mileagesPerYear.map((m) => m.minKilo));
   const maxKilo = Math.max(...mileagesPerYear.map((m) => m.maxKilo));
 
   // Get the mileagePerYear score, if the mileagePerYear is not found, then return an error
-  const mileagePerYearScore = mileagesPerYear.find((m) => mileagePerYear >= m.minKilo && mileagePerYear <= m.maxKilo)
-    ?.score;
+  const mileagePerYearScore = mileagesPerYear.find(
+    (m) => mileagePerYear >= m.minKilo && mileagePerYear <= m.maxKilo,
+  )?.score;
 
   if (!mileagePerYearScore) {
     if (mileagePerYear < minKilo || mileagePerYear > maxKilo) {
       return Response.json({
         error: `Le kilométrage annuel doit être compris entre ${minKilo} et ${maxKilo}`,
-        formerror: 'mileagePerYear',
+        field: 'mileagePerYear',
       });
     }
 
     // Else return a generic error
-    return Response.json({ error: "Le kilométrage annuel n'a pas été trouvé", formerror: 'mileagePerYear' });
+    return Response.json({ error: "Le kilométrage annuel n'a pas été trouvé", field: 'mileagePerYear' });
   }
 
   // Get the constructionYear minimal and maximal score
@@ -84,12 +85,12 @@ export async function POST(request: Request) {
     if (constructionYear < minYear || constructionYear > maxYear) {
       return Response.json({
         error: `L'année de construction doit être comprise entre ${minYear} et ${maxYear}`,
-        formerror: 'constructionYear',
+        field: 'constructionYear',
       });
     }
 
     // else return a generic error
-    return Response.json({ error: "L'année de construction n'a pas été trouvé", formerror: 'constructionYear' });
+    return Response.json({ error: "L'année de construction n'a pas été trouvé", field: 'constructionYear' });
   }
 
   // Calculate the score with the vehicle, energy, mileagePerYear and constructionYear scores
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
   if (!borrowingPercentage)
     return Response.json({
       error: "Erreur interne liée au calcul de votre taux d'emprunt. Veuillez réessayer plus tard.",
-      formerror: null,
+      field: null,
     });
 
   // Get the passenger minimal and maximal score
@@ -110,18 +111,19 @@ export async function POST(request: Request) {
   const maxPassenger = Math.max(...passengers.map((p) => p.passengersNumber));
 
   // Get the passenger bonus/malus score, if the passenger is not found, then return an error
+  // We consider that all range of passengers are covered by the data (ex: 1 to 5 passengers without any gap)
   const passengerPercentage = passengers.find((p) => p.passengersNumber === passenger)?.percentage;
 
   if (!passengerPercentage) {
     if (passenger < minPassenger || passenger > maxPassenger) {
       return Response.json({
         error: `Le nombre de passagers doit être compris entre ${minPassenger} et ${maxPassenger}`,
-        formerror: 'passenger',
+        field: 'passenger',
       });
     }
 
     // Else return a generic error
-    return Response.json({ error: "Le nombre de passagers n'a pas été trouvé", formerror: 'passenger' });
+    return Response.json({ error: "Le nombre de passagers n'a pas été trouvé", field: 'passenger' });
   }
 
   // Calculate the score with the passenger bonus/malus score

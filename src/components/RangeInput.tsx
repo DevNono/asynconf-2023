@@ -5,6 +5,7 @@ import { useState } from 'react';
  */
 const RangeInput = ({
   label = '',
+  error = '',
   min,
   max,
   unit = '',
@@ -16,6 +17,8 @@ const RangeInput = ({
 }: {
   /** Label to display */
   label?: string;
+  /** Error to display */
+  error?: string;
   /** Minimal value */
   min: number;
   /** Maximal value */
@@ -40,9 +43,13 @@ const RangeInput = ({
       <label>
         <div className={'block pb-1 text-main font-bold select-none'}>{label}</div>
         <div className="p-1 price-range">
-          <span className={`text-sm transition-all duration-200 ease-in-out ${!value ? "opacity-0" : ''}`}>{currentValue} {unit}</span>
+          <span className={`text-sm transition-all duration-200 ease-in-out ${!value ? 'opacity-0' : ''}`}>
+            {currentValue} {unit}
+          </span>
           <input
-            className="w-full h-3 transition-colors duration-300 ease-in-out bg-gray-200 rounded-lg cursor-pointer accent-primary"
+            className={`${
+              error ? '!accent-red-600' : ''
+            }  w-full h-3 transition-colors duration-300 ease-in-out bg-gray-200 rounded-lg cursor-pointer accent-primary`}
             type="range"
             min={min}
             max={max}
@@ -58,6 +65,9 @@ const RangeInput = ({
             <span className="text-sm text-gray-600">{min}</span>
             <span className="text-sm text-gray-600">{max}</span>
           </div>
+        </div>
+        <div className={`text-red-600 transition-all duration-200 ease-in-out ${!error ? 'opacity-0' : ''}`}>
+          {error ? error : ''}
         </div>
       </label>
     </div>

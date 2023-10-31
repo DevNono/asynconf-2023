@@ -4,6 +4,7 @@
 const Input = ({
   type = 'text',
   label = '',
+  error = '',
   value,
   placeholder = '',
   onChange,
@@ -14,6 +15,8 @@ const Input = ({
   type?: 'text' | 'number' | 'email' | 'password';
   /** Label to display */
   label?: string;
+  /** Error to display */
+  error?: string;
   /** Value of the select */
   value: string;
   /** Placeholder to display */
@@ -30,12 +33,18 @@ const Input = ({
       <div className={'block pb-0.5 text-main font-bold select-none'}>{label}</div>
 
       <input
-        className="w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark"
+        className={`${
+          error ? '!border-red-600' : ''
+        } w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark`}
         type={type}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        disabled={disabled} />
+        disabled={disabled}
+      />
+      <div className={`text-red-600 transition-all duration-200 ease-in-out ${!error ? 'opacity-0' : ''}`}>
+        {error ? error : ''}
+      </div>
     </label>
   </div>
 );
