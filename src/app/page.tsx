@@ -146,7 +146,7 @@ export default function Home() {
 
   // If fatal error, we show a message
   if (fatalError) {
-    return <p className='text-2xl text-center text-white'>Une erreur est survenue, merci de réessayer plus tard</p>;
+    return <p className="text-2xl text-center text-white">Une erreur est survenue, merci de réessayer plus tard</p>;
   }
 
   return (
