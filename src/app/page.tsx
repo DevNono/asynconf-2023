@@ -64,8 +64,6 @@ export default function Home() {
       .then((res) => {
         // Set a timeout of 1s to show the progress bar at 100% and to make the user feel like the request is sent
         setTimeout(() => {
-          setSubmitting(false);
-
           // Reset the progress bar
           progressBar.current!.style.width = '0';
 
@@ -74,6 +72,7 @@ export default function Home() {
               message: res.data.error,
               field: res.data.field,
             });
+            setSubmitting(false);
             return;
           }
 
@@ -84,6 +83,10 @@ export default function Home() {
             // Redirect to the result page
             router.push('/result');
 
+            setTimeout(() => {
+              setSubmitting(false);
+            }, 100);
+
             return;
           }
 
@@ -92,6 +95,9 @@ export default function Home() {
             message: "Une erreur inconnue s'est produite",
             field: null,
           });
+          setTimeout(() => {
+            setSubmitting(false);
+          }, 100);
         }, 1000);
       })
       .catch((err) => {

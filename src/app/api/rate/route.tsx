@@ -86,7 +86,10 @@ export async function POST(request: Request) {
   // We consider the null value that means that there is no limit
   const constructionYearScore = constructionYears.find(
     (c) =>
-      (constructionYear >= c.minYear || c.minYear === null) && (constructionYear <= c.maxYear || c.maxYear === null),
+      (constructionYear >= c.minYear || c.minYear === null) &&
+      constructionYear >= minYear &&
+      (constructionYear <= c.maxYear || c.maxYear === null) &&
+      constructionYear <= maxYear,
   )?.score;
 
   if (!constructionYearScore) {
