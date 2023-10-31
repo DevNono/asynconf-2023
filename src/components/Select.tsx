@@ -1,3 +1,4 @@
+import styles from './Animation.module.scss';
 /**
  * Displays a select field.
  */
@@ -35,7 +36,9 @@ const Select = ({
       <select
         className={`${
           error ? '!border-red-600' : ''
-        } w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark`}
+        } w-full p-3 transition-colors duration-300 ease-in-out bg-white border-2 rounded-lg cursor-pointer border-primary focus:outline-none focus:border-primary-dark ${
+          error ? styles.shake : ''
+        }`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}>
