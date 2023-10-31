@@ -127,6 +127,7 @@ export default function Home() {
         }, 500);
       })
       .catch((err) => {
+        // Log the error in the console
         console.log(err);
       });
   }, []);

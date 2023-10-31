@@ -13,7 +13,6 @@ export default function Result() {
     // Get the percentage from the local storage
     const percent = localStorage.getItem('percentage');
     setTargetPercentage(() => parseFloat(percent));
-    console.log(targetPercentage);
 
     setTimeout(() => {
       animateToTarget();
@@ -27,7 +26,6 @@ export default function Result() {
     // Animate to the target percentage
     const interval = setInterval(() => {
       setPercentage((percentage) => {
-        console.log(percentage);
         if (percentage < targetPercentage) {
           return percentage + 0.01 * Math.exp(percentage);
         } else {
